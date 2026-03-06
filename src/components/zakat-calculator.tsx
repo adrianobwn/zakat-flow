@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Coins, Users, Wheat, CreditCard, ChevronRight } from "lucide-react"
+import { Coins, Users, Wheat, CreditCard, ChevronRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -16,11 +16,25 @@ const GOLD_PRICE_GRAM = 1150000
 const NISAB_GRAM = 85
 const FIDYAH_PER_DAY = 60000
 
+type ZakatTab = "fitrah" | "maal" | "fidyah"
+
+const ZAKAT_TYPE_MAP: Record<ZakatTab, string> = {
+  fitrah: "FITRAH",
+  maal: "MAAL",
+  fidyah: "FIDYAH",
+}
+
 export function ZakatCalculator() {
+  const [activeTab, setActiveTab] = useState<ZakatTab>("fitrah")
   const [fitrahPeople, setFitrahPeople] = useState(1)
   const [fitrahType, setFitrahType] = useState<"money" | "rice">("money")
   const [wealth, setWealth] = useState("")
   const [fidyahDays, setFidyahDays] = useState(1)
+
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMsg, setErrorMsg] = useState("")
 
   const fitrahTotal = fitrahType === "money" 
     ? fitrahPeople * ZAKAT_FITRAH_MONEY 
@@ -31,6 +45,59 @@ export function ZakatCalculator() {
   const maalTotal = wealthNum >= nisab ? Math.round(wealthNum * 0.025) : 0
 
   const fidyahTotal = fidyahDays * FIDYAH_PER_DAY
+
+  const fitrahRiceEquivalent = Math.round((fitrahTotal / RICE_PRICE_KG) * 10) / 10
+
+  function getActiveTotal(): number {
+    switch (activeTab) {
+      case "fitrah": return fitrahTotal
+      case "maal": return maalTotal
+      case "fidyah": return fidyahTotal
+    }
+  }
+
+  async function handleSubmit() {
+    setErrorMsg("")
+
+    const amount = getActiveTotal()
+    if (amount <= 0) {
+      setErrorMsg("Nominal zakat harus lebih dari 0.")
+      return
+    }
+    if (!email.trim()) {
+      setErrorMsg("Email wajib diisi.")
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim() || null,
+          email: email.trim(),
+          amount,
+          zakatType: ZAKAT_TYPE_MAP[activeTab],
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setErrorMsg(data.error || "Gagal membuat pembayaran.")
+        return
+      }
+
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl
+      }
+    } catch {
+      setErrorMsg("Terjadi kesalahan jaringan.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   const fmt = (n: number) => "Rp " + n.toLocaleString("id-ID")
 
@@ -47,7 +114,7 @@ export function ZakatCalculator() {
 
           <Card className="mt-8 border-border/60">
             <CardContent className="pt-6">
-              <Tabs defaultValue="fitrah">
+              <Tabs defaultValue="fitrah" onValueChange={(v) => { setActiveTab(v as ZakatTab); setErrorMsg("") }}>
                 <TabsList className="grid w-full grid-cols-3 bg-muted/50">
                   <TabsTrigger value="fitrah" className="text-xs sm:text-sm">
                     Fitrah
@@ -128,6 +195,9 @@ export function ZakatCalculator() {
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {fitrahPeople} orang x {fitrahType === "money" ? "Rp 50.000" : "2.5 kg beras"}
+                    </p>
+                    <p className="mt-2 text-xs font-medium text-emerald-600">
+                      🌾 Setara dengan {fitrahRiceEquivalent} kg Beras
                     </p>
                   </div>
                 </TabsContent>
@@ -213,9 +283,56 @@ export function ZakatCalculator() {
                 </TabsContent>
               </Tabs>
 
-              <Button className="mt-6 w-full gap-2 py-6" size="lg">
-                Bayar Sekarang via Mayar
-                <ChevronRight className="h-4 w-4" />
+              <div className="mt-6 space-y-3">
+                <div>
+                  <Label htmlFor="calc-name" className="text-sm text-muted-foreground">
+                    Nama (opsional)
+                  </Label>
+                  <Input
+                    id="calc-name"
+                    type="text"
+                    placeholder="Nama lengkap"
+                    className="mt-1"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="calc-email" className="text-sm text-muted-foreground">
+                    Email <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="calc-email"
+                    type="email"
+                    placeholder="email@contoh.com"
+                    className="mt-1"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {errorMsg && (
+                <p className="mt-3 text-sm text-red-500">{errorMsg}</p>
+              )}
+
+              <Button
+                className="mt-4 w-full gap-2 py-6"
+                size="lg"
+                disabled={isSubmitting}
+                onClick={handleSubmit}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Memproses...
+                  </>
+                ) : (
+                  <>
+                    Bayar
+                    <ChevronRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
               <p className="mt-3 text-center text-xs text-muted-foreground">
                 Sertifikat digital langsung dikirim ke email

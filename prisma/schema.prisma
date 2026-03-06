@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ZakatType {
+  FITRAH
+  MAAL
+  FIDYAH
+  SEDEKAH
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+}
+
+model Campaign {
+  id            String         @id @default(cuid())
+  title         String
+  description   String
+  targetAmount  Float
+  currentAmount Float          @default(0)
+  fitrahRiceKg  Float          @default(0)
+  imageUrl      String?
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  transactions  Transaction[]
+  distributions Distribution[]
+
+  @@map("campaigns")
+}
+
+model Transaction {
+  id         String            @id @default(cuid())
+  email      String
+  name       String?
+  amount     Float
+  zakatType  ZakatType
+  status     TransactionStatus @default(PENDING)
+  paymentUrl String?
+  campaignId String?
+  campaign   Campaign?         @relation(fields: [campaignId], references: [id])
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@map("transactions")
+}
+
+model Distribution {
+  id          String   @id @default(cuid())
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  description String
+  photoUrl    String
+  amount      Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("distributions")
+}
