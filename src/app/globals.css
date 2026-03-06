@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+@plugin "../../node_modules/tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: var(--color-slate-50);
+  --foreground: var(--color-slate-950);
+  --card: var(--color-slate-50);
+  --card-foreground: var(--color-slate-950);
+  --popover: var(--color-slate-50);
+  --popover-foreground: var(--color-slate-950);
+  --primary: var(--color-amber-500);
+  --primary-foreground: var(--color-slate-950);
+  --secondary: var(--color-slate-200);
+  --secondary-foreground: var(--color-slate-950);
+  --muted: var(--color-slate-100);
+  --muted-foreground: var(--color-slate-600);
+  --accent: var(--color-amber-100);
+  --accent-foreground: var(--color-slate-950);
+  --destructive: var(--color-red-500);
+  --destructive-foreground: var(--color-slate-50);
+  --border: var(--color-slate-950);
+  --input: var(--color-slate-200);
+  --ring: var(--color-slate-950);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: var(--color-slate-950);
+  --foreground: var(--color-slate-50);
+  --card: var(--color-slate-950);
+  --card-foreground: var(--color-slate-50);
+  --popover: var(--color-slate-950);
+  --popover-foreground: var(--color-slate-50);
+  --primary: var(--color-amber-500);
+  --primary-foreground: var(--color-slate-950);
+  --secondary: var(--color-slate-800);
+  --secondary-foreground: var(--color-slate-50);
+  --muted: var(--color-slate-800);
+  --muted-foreground: var(--color-slate-400);
+  --accent: var(--color-amber-900);
+  --accent-foreground: var(--color-slate-50);
+  --destructive: var(--color-red-900);
+  --destructive-foreground: var(--color-slate-50);
+  --border: var(--color-slate-800);
+  --input: var(--color-slate-800);
+  --ring: var(--color-amber-500);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), 'Space Grotesk', system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .shadow-soft {
+    box-shadow: 0px 8px 24px -4px rgba(5, 150, 105, 0.08);
+    /* Emerald tinted soft shadow */
+  }
+
+  .shadow-soft-hover {
+    box-shadow: 0px 16px 32px -4px rgba(5, 150, 105, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .shadow-soft-active {
+    box-shadow: 0px 4px 12px -2px rgba(5, 150, 105, 0.05);
+    transform: translateY(0);
+  }
+
+  .border-soft {
+    @apply border border-emerald-100;
+  }
+}
