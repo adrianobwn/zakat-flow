@@ -27,7 +27,7 @@ export function Navbar() {
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-bold text-slate-900 font-display tracking-tight transition-colors group-hover:text-emerald-600">
-              Zakat-Flow
+              NuraniZakat
             </span>
           </div>
         </a>
@@ -40,8 +40,8 @@ export function Navbar() {
           <a href="#transparency" className="text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-600">
             Laporan Umat
           </a>
-          <a href="#mitra" className="text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-600">
-            Mitra Kami
+          <a href="#history" className="text-sm font-semibold text-slate-600 transition-colors hover:text-emerald-600">
+            Riwayat
           </a>
         </nav>
 
@@ -81,11 +81,11 @@ export function Navbar() {
               Laporan Umat
             </a>
             <a
-              href="#mitra"
+              href="#history"
               onClick={() => setOpen(false)}
               className="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
             >
-              Mitra Kami
+              Riwayat
             </a>
             <div className="mt-4 border-t border-emerald-100 pt-4">
               <a href="#transparency" className="flex h-12 w-full items-center justify-center rounded-full bg-emerald-600 px-6 font-display text-sm font-bold text-white shadow-soft transition-colors hover:bg-emerald-700">

@@ -10,19 +10,19 @@
   --card-foreground: var(--color-slate-950);
   --popover: var(--color-slate-50);
   --popover-foreground: var(--color-slate-950);
-  --primary: var(--color-amber-500);
-  --primary-foreground: var(--color-slate-950);
-  --secondary: var(--color-slate-200);
-  --secondary-foreground: var(--color-slate-950);
+  --primary: var(--color-emerald-600);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-emerald-50);
+  --secondary-foreground: var(--color-emerald-900);
   --muted: var(--color-slate-100);
   --muted-foreground: var(--color-slate-600);
-  --accent: var(--color-amber-100);
-  --accent-foreground: var(--color-slate-950);
+  --accent: var(--color-emerald-100);
+  --accent-foreground: var(--color-emerald-900);
   --destructive: var(--color-red-500);
   --destructive-foreground: var(--color-slate-50);
-  --border: var(--color-slate-950);
+  --border: var(--color-slate-200);
   --input: var(--color-slate-200);
-  --ring: var(--color-slate-950);
+  --ring: var(--color-emerald-500);
   --radius: 0.5rem;
 }
 
@@ -77,6 +77,10 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

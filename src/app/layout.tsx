@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
 
 export const metadata: Metadata = {
-  title: 'Zakat-Flow | Platform Zakat Digital Transparan',
+  title: 'NuraniZakat | Platform Zakat Digital Transparan',
   description: 'Tunaikan zakat dengan mudah dan pantau penyaluran secara real-time. Platform zakat digital terpercaya dengan transparansi penuh.',
   generator: 'v0.app',
   icons: {
