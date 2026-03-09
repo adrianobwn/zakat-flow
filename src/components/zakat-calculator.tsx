@@ -536,7 +536,7 @@ export function ZakatCalculator() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="calc-mobile" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">No. WhatsApp <span className="text-emerald-500">*</span></Label>
-                      <Input id="calc-mobile" type="tel" maxLength={12} placeholder="081234567890" className="rounded-xl border-slate-100 bg-slate-50/50 p-6 h-12 focus:ring-emerald-500/20" value={mobile} onChange={(e) => setMobile(e.target.value)} />
+                      <Input id="calc-mobile" type="tel" maxLength={12} placeholder="081234567890" className="rounded-xl border-slate-100 bg-slate-50/50 p-6 h-12 focus:ring-emerald-500/20" value={mobile} onChange={(e) => setMobile(e.target.value.replace(/\D/g, ""))} />
                     </div>
                   </div>
                 </div>
