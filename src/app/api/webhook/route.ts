@@ -6,14 +6,25 @@ const FITRAH_RICE_KG_PER_PERSON = 2.5;
 const FITRAH_PRICE_PER_PERSON = 45000;
 
 function verifySignature(payload: string, signature: string): boolean {
-  const secret = process.env.MAYAR_WEBHOOK_SECRET!;
-  const hmac = crypto.createHmac("sha256", secret);
-  hmac.update(payload);
-  const expected = hmac.digest("hex");
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expected)
-  );
+  try {
+    const secret = process.env.MAYAR_WEBHOOK_SECRET || "";
+    if (!secret || !signature) return false;
+
+    const hmac = crypto.createHmac("sha256", secret);
+    hmac.update(payload);
+    const expected = hmac.digest("hex");
+
+    if (signature.length !== expected.length) {
+      return false; // Prevent timingSafeEqual throw if length mismatch
+    }
+
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expected)
+    );
+  } catch (error) {
+    return false;
+  }
 }
 
 export async function POST(req: NextRequest) {
