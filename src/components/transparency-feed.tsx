@@ -44,9 +44,94 @@ export function TransparencyFeed() {
     const [isDownloading, setIsDownloading] = useState(false)
     const [selectedMilestone, setSelectedMilestone] = useState<typeof milestones[0] | null>(null)
 
-    const handleDownload = () => {
+    const handleDownload = async () => {
         setIsDownloading(true)
-        setTimeout(() => setIsDownloading(false), 2000)
+        try {
+            const { jsPDF } = await import("jspdf")
+            const doc = new jsPDF()
+
+            // Helper to get Base64
+            const getBase64Image = async (url: string): Promise<string> => {
+                const res = await fetch(url)
+                const blob = await res.blob()
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader()
+                    reader.onloadend = () => resolve(reader.result as string)
+                    reader.onerror = reject
+                    reader.readAsDataURL(blob)
+                })
+            }
+
+            // Document Title
+            doc.setFontSize(22)
+            doc.setTextColor(5, 150, 105) // emerald-600
+            doc.text("Laporan Transparansi Dana Umat", 14, 25)
+
+            // Subtitle
+            doc.setFontSize(12)
+            doc.setTextColor(100, 116, 139) // slate-500
+            doc.text("NuraniZakat - Jejak Kebaikan Muzakki", 14, 33)
+
+            // Divider Line
+            doc.setDrawColor(203, 213, 225) // slate-300
+            doc.setLineWidth(0.5)
+            doc.line(14, 38, 196, 38)
+
+            // Loop Milestones Data into PDF
+            let y = 48
+            for (let idx = 0; idx < milestones.length; idx++) {
+                const m = milestones[idx]
+
+                doc.setFontSize(14)
+                doc.setTextColor(15, 23, 42) // slate-900
+                doc.text(`${idx + 1}. ${m.category}`, 14, y)
+
+                // Add Image
+                try {
+                    const imgBase64 = await getBase64Image(m.imageUrl)
+                    doc.addImage(imgBase64, 'PNG', 14, y + 5, 182, 80)
+                    y += 95 // Move cursor below image
+                } catch (e) {
+                    console.error("Failed to load image for PDF", e)
+                    y += 10 // Fallback spacing
+                }
+
+                doc.setFontSize(10)
+                doc.setTextColor(100, 116, 139)
+                doc.text(`Tanggal: ${m.date}   |   Area: ${m.location}   |   Penerima: ${m.beneficiaries}`, 14, y)
+
+                doc.setFontSize(12)
+                doc.setTextColor(5, 150, 105) // emerald-600
+                doc.text(`Total Tersalurkan: ${m.amount}`, 14, y + 7)
+
+                // Split long description text
+                doc.setFontSize(10)
+                doc.setTextColor(71, 85, 105) // slate-600
+                const splitText = doc.splitTextToSize(m.fullDescription, 182)
+                doc.text(splitText, 14, y + 14)
+
+                y += 14 + (splitText.length * 5) + 12
+
+                // Add new page if reaching bottom
+                if (y > 260 && idx < milestones.length - 1) {
+                    doc.addPage()
+                    y = 20
+                }
+            }
+
+            // Footer info
+            doc.setFontSize(9)
+            doc.setTextColor(148, 163, 184)
+            doc.text("Dokumen ini dihasilkan otomatatis oleh Sistem Admin NuraniZakat. Telah terverifikasi Syariah.", 14, 285)
+
+            // Trigger browser save
+            doc.save("Laporan_Transparansi_NuraniZakat.pdf")
+        } catch (error) {
+            console.error("Gagal membuat PDF:", error)
+            alert("Terjadi kesalahan saat membuat laporan PDF.")
+        } finally {
+            setIsDownloading(false)
+        }
     }
 
     // Modal click outside handler

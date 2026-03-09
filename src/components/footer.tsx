@@ -1,4 +1,5 @@
 import { ZakatLogo, SyariahBadge } from "@/components/ui/custom-icons"
+import Link from "next/link"
 
 export function Footer() {
   return (
@@ -20,10 +21,16 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Original bottom section */}
         <div className="mt-16 flex flex-col items-center justify-between border-t border-emerald-100 pt-8 sm:flex-row">
-          <p className="text-xs font-semibold uppercase tracking-widest text-emerald-600/70">
-            &copy; 2026 NuraniZakat.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-emerald-600/70">
+              &copy; 2026 NuraniZakat.
+            </p>
+            <Link href="/admin/login" className="text-[10px] font-bold uppercase tracking-widest text-emerald-600/60 hover:text-emerald-900 transition-colors">
+              Portal Admin
+            </Link>
+          </div>
           <div className="mt-6 flex flex-wrap justify-center gap-6 sm:mt-0">
             <div className="flex items-center gap-2 text-emerald-600/60">
               <SyariahBadge className="w-4 h-4" />
