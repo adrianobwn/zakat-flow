@@ -31,10 +31,16 @@ function verifySignature(payload: string, signature: string): boolean {
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
-    const signature = req.headers.get("x-callback-signature") || "";
+    // Mayar might use different headers depending on the webhook version
+    const signature =
+      req.headers.get("x-callback-signature") ||
+      req.headers.get("x-mayar-signature") ||
+      req.headers.get("authorization") ||
+      "";
 
     console.log("=== INCOMING WEBHOOK ===");
-    console.log("Signature:", signature);
+    console.log("All Headers:", JSON.stringify(Object.fromEntries(req.headers.entries()), null, 2));
+    console.log("Extracted Signature:", signature);
 
     // Verifikasi signature webhook dari Mayar
     if (!verifySignature(rawBody, signature)) {
