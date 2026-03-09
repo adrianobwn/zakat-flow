@@ -66,6 +66,7 @@ export function ZakatCalculator() {
   // Form Details
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [mobile, setMobile] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
 
@@ -149,8 +150,8 @@ export function ZakatCalculator() {
       setErrorMsg("Nominal zakat harus lebih dari 0 atau memenuhi nisab.")
       return
     }
-    if (!email.trim()) {
-      setErrorMsg("Email wajib diisi.")
+    if (!email.trim() || !mobile.trim()) {
+      setErrorMsg("Email dan No WhatsApp wajib diisi.")
       return
     }
 
@@ -165,6 +166,7 @@ export function ZakatCalculator() {
         body: JSON.stringify({
           name: name.trim() || null,
           email: email.trim(),
+          mobile: mobile.trim(),
           amount,
           zakatType: finalZakatType,
         }),
@@ -523,7 +525,7 @@ export function ZakatCalculator() {
                 </Tabs>
 
                 <div className="mt-8 space-y-4 border-t border-slate-100 pt-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="calc-name" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Nama Lengkap</Label>
                       <Input id="calc-name" type="text" placeholder="Hamba Allah" className="rounded-xl border-slate-100 bg-slate-50/50 p-6 h-12 focus:ring-emerald-500/20" value={name} onChange={(e) => setName(e.target.value)} />
@@ -531,6 +533,10 @@ export function ZakatCalculator() {
                     <div className="space-y-2">
                       <Label htmlFor="calc-email" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Email <span className="text-emerald-500">*</span></Label>
                       <Input id="calc-email" type="email" placeholder="akram@gmail.com" className="rounded-xl border-slate-100 bg-slate-50/50 p-6 h-12 focus:ring-emerald-500/20" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="calc-mobile" className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">No. WhatsApp <span className="text-emerald-500">*</span></Label>
+                      <Input id="calc-mobile" type="tel" maxLength={12} placeholder="081234567890" className="rounded-xl border-slate-100 bg-slate-50/50 p-6 h-12 focus:ring-emerald-500/20" value={mobile} onChange={(e) => setMobile(e.target.value)} />
                     </div>
                   </div>
                 </div>

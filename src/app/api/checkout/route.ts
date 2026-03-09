@@ -2,12 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ZakatType } from "@prisma/client";
 
-const MAYAR_API_URL = "https://api.mayar.id/hl/v1/payment/create";
+// Get base URL dynamically based on whether it's a test or live key
+const getMayarApiUrl = (apiKey: string) => {
+  if (apiKey?.startsWith('sk_test_') || apiKey?.startsWith('eyJ')) {
+    // Both JWT tokens (like from sandbox) and sk_test_ keys use sandbox URL 
+    // unless defined explicitly in env.
+    return process.env.MAYAR_API_URL || "https://api.mayar.club/hl/v1/payment/create";
+  }
+  return process.env.MAYAR_API_URL || "https://api.mayar.id/hl/v1/payment/create";
+};
 
 const FITRAH_RICE_KG_PER_PERSON = 2.5;
 const FITRAH_PRICE_PER_PERSON = 45000;
 
 export async function POST(req: NextRequest) {
+  const apiKey = process.env.MAYAR_API_KEY || "";
+  const apiUrl = getMayarApiUrl(apiKey);
+
   try {
     const body = await req.json();
     const { name, email, amount, zakatType, campaignId } = body;
@@ -54,18 +65,20 @@ export async function POST(req: NextRequest) {
     }
 
     // Panggil API Mayar untuk generate link pembayaran
-    const mayarResponse = await fetch(MAYAR_API_URL, {
+    const mayarResponse = await fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.MAYAR_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         name: name || email,
         email,
+        mobile: (body.mobile || "081111111111").substring(0, 12), // Required, Max 12 chars
         amount,
         description,
         mobile_id: transaction.id,
+        redirect_url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
       }),
     });
 

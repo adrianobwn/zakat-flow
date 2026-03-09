@@ -25,7 +25,7 @@ export default function AdminHeader() {
                             <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Divisi Keuangan</p>
                         </div>
                         <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden">
-                            <img src="/images/transparency/edukasi.png" alt="Admin" className="w-full h-full object-cover opacity-80" />
+                            <span className="text-emerald-700 font-bold text-sm">AU</span>
                         </div>
 
                         {/* Logout Form using Server Action */}
