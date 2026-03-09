@@ -11,7 +11,6 @@ const getMayarApiUrl = (apiKey: string) => {
   }
   return process.env.MAYAR_API_URL || "https://api.mayar.id/hl/v1/payment/create";
 };
-
 const FITRAH_RICE_KG_PER_PERSON = 2.5;
 const FITRAH_PRICE_PER_PERSON = 45000;
 
@@ -105,7 +104,11 @@ export async function POST(req: NextRequest) {
       paymentUrl,
     });
   } catch (error) {
-    console.error("Checkout error:", error);
+    console.error("Checkout error (DETAIL):", error);
+    if (error instanceof Error) {
+      console.error("Error Message:", error.message);
+      console.error("Error Stack:", error.stack);
+    }
     return NextResponse.json(
       { error: "Terjadi kesalahan server." },
       { status: 500 }
